@@ -15,10 +15,10 @@ export function userRoutes() {
 
   router.post('/', [createUser.validate], controller.create);
   router.post('/login', [login.validate], controller.login);
-  router.get('/', [auth.validar], controller.listAll);
+  router.get('/', [auth.validate], controller.listAll);
   router.get(
     '/:id',
-    [auth.validar, validateIdFormat.validate],
+    [auth.validate, validateIdFormat.validate],
     controller.getById,
   );
 

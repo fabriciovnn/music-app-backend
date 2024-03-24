@@ -3,7 +3,7 @@ import { JWTAdapter } from '../adapters/jwt.adapter';
 import { envs } from '../envs';
 
 export class Auth {
-  public async validar(req: Request, res: Response, next: NextFunction) {
+  public async validate(req: Request, res: Response, next: NextFunction) {
     const token = req.headers.authorization;
 
     if (!token) {
@@ -19,6 +19,8 @@ export class Auth {
 
       const jwt = new JWTAdapter(envs.JWT_SECRET_KEY, envs.JWT_EXPIRE_IN);
       const user = jwt.decodeToken(tokenWithoutBearer);
+
+      req.authUser = user;
 
       return next();
     } catch (error) {
