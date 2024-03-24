@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid()) @db.Uuid
+  name String @db.VarChar(100)
+  email String @db.VarChar(100) @unique
+  password String @db.Text
+  role RoleType @default(user)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  playlists Playlist[]
+
+  @@map("user")
+}
+
+enum RoleType {
+  admin
+  user
+}
+
+model Playlist {
+  id String @id @default(uuid()) @db.Uuid
+  name String @db.VarChar(100)
+  genre String @db.VarChar(100)
+
+  userId String @db.Uuid @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+  musics Music[]
+
+  @@map("playlist")
+}
+
+model Music {
+  id String @id @default(uuid()) @db.Uuid
+  name String @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  playlistId String @db.Uuid @map("playlist_id")
+  playlist Playlist @relation(fields: [playlistId], references: [id])
+  
+  @@map("music")
+}
