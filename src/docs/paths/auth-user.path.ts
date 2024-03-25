@@ -57,7 +57,7 @@ export const authUserPath = {
                       type: 'string',
                       format: 'JWT',
                       summary:
-                        'Token de autorização gerado a partir dos dados do aluno logado',
+                        'Token de autorização gerado a partir dos dados do usuario logado',
                       example:
                         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
                     },
