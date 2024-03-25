@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import { musicRoutes, playlistRoutes, userRoutes } from './routes';
 import { serve, setup } from 'swagger-ui-express';
+import docs from './docs';
 
 export function createServer() {
   const app = express();
@@ -13,7 +14,7 @@ export function createServer() {
   app.use('/users', userRoutes());
   app.use('/playlists', playlistRoutes());
   app.use('/musics', musicRoutes());
-  // app.use("/docs", serve, setup(docs));
+  app.use('/docs', serve, setup(docs));
   app.get('/', (_, res) => res.status(200).json({ ok: true }));
 
   return app;
