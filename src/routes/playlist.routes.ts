@@ -20,6 +20,16 @@ export function playlistRoutes() {
     [auth.validate, validateIdFormat.validate],
     controller.getById,
   );
+  router.put(
+    '/:id',
+    [auth.validate, validateIdFormat.validate],
+    controller.update,
+  );
+  router.delete(
+    '/:id',
+    [auth.validate, validateIdFormat.validate],
+    controller.delete,
+  );
 
   return router;
 }

@@ -7,6 +7,8 @@ import { CreatePlaylistDTO } from '../dtos/create-playlist.dto';
 import { ResponseDTO } from '../dtos/response.dto';
 import repository from '../database/prisma.connection';
 import { GetPlaylistByIdDTO } from '../dtos/get-playlist-by-id.dto';
+import { UpdatePlaylistDTO } from '../dtos/update-playlist.dto';
+import { DeletePlaylistDTO } from '../dtos/delete-playlist.dto';
 
 interface PlaylistWithRelationMusics extends PlaylistEntity {
   musics: MusicEntity[];
@@ -77,6 +79,46 @@ export class PlaylistRepository {
       ok: true,
       message: 'Playlist encontrada com sucesso',
       data: this.mapToModel(playlistFounded),
+    };
+  }
+
+  public async update(data: UpdatePlaylistDTO): Promise<ResponseDTO> {
+    const updatedPlaylist = await repository.playlist.update({
+      where: {
+        id: data.playlistId,
+      },
+      data: {
+        name: data.name,
+        genre: data.genre,
+      },
+      include: {
+        musics: true,
+      },
+    });
+
+    return {
+      code: 200,
+      ok: true,
+      message: 'Playlist atualizada com sucesso',
+      data: this.mapToModel(updatedPlaylist),
+    };
+  }
+
+  public async delete(data: DeletePlaylistDTO): Promise<ResponseDTO> {
+    const deletedPlaylist = await repository.playlist.delete({
+      where: {
+        id: data.playllistId,
+      },
+      include: {
+        musics: true,
+      },
+    });
+
+    return {
+      code: 200,
+      ok: true,
+      message: 'Playlist excluida com sucesso',
+      data: this.mapToModel(deletedPlaylist),
     };
   }
 
