@@ -4,14 +4,13 @@ import { UserRepository } from '../repositories/user.repository';
 export class UserController {
   public async create(req: Request, res: Response) {
     try {
-      const { name, email, password, role } = req.body;
+      const { name, email, password } = req.body;
       const service = new UserRepository();
 
       const response = await service.create({
         name,
         email,
         password,
-        role,
       });
 
       return res.status(response.code).json(response);

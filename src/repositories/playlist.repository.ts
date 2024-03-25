@@ -1,9 +1,16 @@
-import { Playlist as PlaylistEntity } from '@prisma/client';
-import { Playlist } from '../models';
+import {
+  Playlist as PlaylistEntity,
+  Music as MusicEntity,
+} from '@prisma/client';
+import { Music, Playlist } from '../models';
 import { CreatePlaylistDTO } from '../dtos/create-playlist.dto';
 import { ResponseDTO } from '../dtos/response.dto';
 import repository from '../database/prisma.connection';
 import { GetPlaylistByIdDTO } from '../dtos/get-playlist-by-id.dto';
+
+interface PlaylistWithRelationMusics extends PlaylistEntity {
+  musics: MusicEntity[];
+}
 
 export class PlaylistRepository {
   public async create(data: CreatePlaylistDTO): Promise<ResponseDTO> {
@@ -13,6 +20,7 @@ export class PlaylistRepository {
         name: data.name,
         genre: data.genre,
       },
+      include: { musics: true },
     });
 
     return {
@@ -28,6 +36,7 @@ export class PlaylistRepository {
       where: {
         userId: user,
       },
+      include: { musics: true },
     });
 
     if (!playlists.length) {
@@ -52,6 +61,7 @@ export class PlaylistRepository {
         id: data.playlistId,
         userId: data.userId,
       },
+      include: { musics: true },
     });
 
     if (!playlistFounded) {
@@ -70,7 +80,24 @@ export class PlaylistRepository {
     };
   }
 
-  private mapToModel(entity: PlaylistEntity): Playlist {
-    return new Playlist(entity.id, entity.userId, entity.name, entity.genre);
+  private mapToModel(entity: PlaylistWithRelationMusics) {
+    const playlist = new Playlist(
+      entity.id,
+      entity.userId,
+      entity.name,
+      entity.genre,
+    );
+
+    const musics: Music[] = [];
+    entity.musics?.forEach((m) => {
+      const music = new Music(m.id, m.playlistId, m.name);
+
+      musics.unshift(music);
+    });
+
+    return {
+      ...playlist.toJSON(),
+      musics: musics,
+    };
   }
 }

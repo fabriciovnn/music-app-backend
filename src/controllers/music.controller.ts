@@ -1,11 +1,23 @@
 import { Request, Response } from 'express';
 import { MusicRepository } from '../repositories/music.repository';
+import { PlaylistRepository } from '../repositories/playlist.repository';
 
 export class MusicController {
   public async create(req: Request, res: Response) {
     try {
       const { name } = req.body;
       const { id } = req.params;
+      const user = req.authUser;
+
+      const servicePlaylist = new PlaylistRepository();
+      const responsePlaylist = await servicePlaylist.getById({
+        playlistId: id,
+        userId: user.id,
+      });
+
+      if (!responsePlaylist.ok) {
+        return res.status(responsePlaylist.code).json(responsePlaylist);
+      }
 
       const service = new MusicRepository();
       const response = await service.create({ name, playlistId: id });

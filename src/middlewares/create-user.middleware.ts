@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { RoleTypeEnum } from '../enum/role.enum';
 
 export class CreateUser {
   public validate(req: Request, res: Response, next: NextFunction) {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
-    if (!name || !email || !password || !role) {
+    if (!name || !email || !password) {
       return res.status(400).json({
         ok: false,
         message: 'Faltam campos!',
@@ -19,17 +18,10 @@ export class CreateUser {
       });
     }
 
-    if (password.length < 6) {
+    if (password.length < 5) {
       return res.status(400).json({
         ok: false,
         message: 'Mínima 6 caracteres para senha',
-      });
-    }
-
-    if (role !== RoleTypeEnum.admin && role !== RoleTypeEnum.user) {
-      return res.status(400).json({
-        ok: false,
-        message: "Role inválida! Deve ser apenas dos tipos 'user' ou 'admin'",
       });
     }
 
