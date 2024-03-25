@@ -5,7 +5,7 @@ import { User as UserEntity } from '@prisma/client';
 import { User } from '../models';
 import { RoleTypeEnum } from '../enum/role.enum';
 import { LoginDTO } from '../dtos/login.dto';
-import { JWTAdapter } from '../adapters';
+import { BcryptAdapter, JWTAdapter } from '../adapters';
 import { envs } from '../envs';
 
 export class UserRepository {
@@ -22,11 +22,14 @@ export class UserRepository {
       };
     }
 
+    const bcrypt = new BcryptAdapter(Number(envs.BCRYPT_SALT));
+    const hash = await bcrypt.hash(data.password);
+
     const userDB = await repository.user.create({
       data: {
         email: data.email,
         name: data.name,
-        password: data.password,
+        password: hash,
       },
     });
 
@@ -42,11 +45,21 @@ export class UserRepository {
     const userFounded = await repository.user.findUnique({
       where: {
         email: data.email,
-        password: data.password,
       },
     });
 
     if (!userFounded) {
+      return {
+        code: 401,
+        ok: false,
+        message: 'Credenciais inválidas. E-mail não cadastrado',
+      };
+    }
+
+    const bcrypt = new BcryptAdapter(Number(envs.BCRYPT_SALT));
+    const match = await bcrypt.compare(data.password, userFounded.password);
+
+    if (!match) {
       return {
         code: 401,
         ok: false,
@@ -88,8 +101,11 @@ export class UserRepository {
     };
   }
 
-  public async listAll(): Promise<ResponseDTO> {
+  public async listAll(user: string | undefined): Promise<ResponseDTO> {
     const usersDB = await repository.user.findMany({
+      where: {
+        id: user,
+      },
       orderBy: { name: 'desc' },
     });
 

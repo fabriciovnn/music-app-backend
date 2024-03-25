@@ -40,10 +40,11 @@ export class UserController {
     }
   }
 
-  public async listAll(_: Request, res: Response) {
+  public async listAll(req: Request, res: Response) {
     try {
+      const { user } = req.query;
       const service = new UserRepository();
-      const response = await service.listAll();
+      const response = await service.listAll(user as string | undefined);
 
       return res.status(response.code).json(response);
     } catch (error: any) {

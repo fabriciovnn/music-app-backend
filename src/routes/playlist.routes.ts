@@ -14,11 +14,7 @@ export function playlistRoutes() {
   const authorization = new Authorization();
 
   router.post('/', [auth.validate, createPlaylist.validate], controller.create);
-  router.get(
-    '/',
-    [auth.validate, authorization.listPlaylists],
-    controller.listAll,
-  );
+  router.get('/', [auth.validate, authorization.list], controller.listAll);
   router.get(
     '/:id',
     [auth.validate, validateIdFormat.validate],
