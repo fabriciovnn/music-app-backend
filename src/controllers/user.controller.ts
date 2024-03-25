@@ -73,4 +73,51 @@ export class UserController {
       });
     }
   }
+
+  public async update(req: Request, res: Response) {
+    try {
+      const { name } = req.body;
+      const { id } = req.params;
+
+      const service = new UserRepository();
+
+      const responseUserExist = await service.getById(id);
+      if (!responseUserExist.code) {
+        return res.status(responseUserExist.code).json(responseUserExist);
+      }
+
+      const response = await service.update({ userId: id, name });
+
+      return res.status(response.code).json(response);
+    } catch (error: any) {
+      return res.status(500).json({
+        code: 500,
+        ok: false,
+        message: error.toString(),
+      });
+    }
+  }
+
+  public async delete(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const service = new UserRepository();
+
+      const responseUserExist = await service.getById(id);
+      if (!responseUserExist.code) {
+        return res.status(responseUserExist.code).json(responseUserExist);
+      }
+
+      const response = await service.delete(id);
+
+      return res.status(response.code).json(response);
+    } catch (error: any) {
+      return res.status(500).json({
+        code: 500,
+        ok: false,
+        message: error.toString(),
+      });
+    }
+  }
 }

@@ -23,6 +23,24 @@ export function userRoutes() {
     [auth.validate, validateIdFormat.validate],
     controller.getById,
   );
+  router.put(
+    '/:id',
+    [
+      auth.validate,
+      authorization.updateOrDeleteUser,
+      validateIdFormat.validate,
+    ],
+    controller.update,
+  );
+  router.delete(
+    '/:id',
+    [
+      auth.validate,
+      authorization.updateOrDeleteUser,
+      validateIdFormat.validate,
+    ],
+    controller.delete,
+  );
 
   return router;
 }

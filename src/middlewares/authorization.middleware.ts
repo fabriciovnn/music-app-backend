@@ -13,4 +13,18 @@ export class Authorization {
 
     return next();
   }
+
+  public updateOrDeleteUser(req: Request, res: Response, next: NextFunction) {
+    const user = req.authUser;
+
+    if (user.role !== 'admin') {
+      return res.status(403).json({
+        code: 403,
+        ok: false,
+        message: 'Você não está autorizado a atualizar ou deletar um usuário',
+      });
+    }
+
+    return next();
+  }
 }
